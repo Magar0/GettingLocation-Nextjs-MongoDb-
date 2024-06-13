@@ -8,6 +8,7 @@ export default function Home() {
   const [position, setPosition] = useState()
   const [name, SetName] = useState("")
   const [input, setInput] = useState("");
+  const [city, setCity] = useState('')
 
   // const sendDataToBackend = async (newLocation) => {
   //   await fetch('/api', {
@@ -25,6 +26,7 @@ export default function Home() {
       const data = await res.json();
       const { ip, city } = data
       setIp(ip)
+      setCity(city)
       await fetch('/api', {
         method: "POST",
         headers: {
@@ -108,7 +110,7 @@ export default function Home() {
       <button className="bg-slate-800 px-5 py-2 rounded-xl mt-2" onClick={handleOk} >Ok</button>
       {name &&
         <>
-          <p className="text-xl mt-10 italic">Hi <span className="font-semibold capitalize ">{name}</span>, you are from {location?.city}, {location?.country_name} </p>
+          <p className="text-xl mt-10 italic">Hi <span className="font-semibold capitalize ">{name}</span>, you are from {city} </p>
         </>
       }
     </main>
