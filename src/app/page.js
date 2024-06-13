@@ -3,19 +3,32 @@
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [location, setLocation] = useState({});
+  // const [location, setLocation] = useState({});
+  const [position, setPosition] = useState()
   const [name, SetName] = useState("")
   const [input, setInput] = useState("");
 
-  const sendDataToBackend = async (newLocation) => {
+  // const sendDataToBackend = async (newLocation) => {
+  //   await fetch('/api', {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-type": "application/json",
+  //     },
+  //     body: JSON.stringify({ ...newLocation })
+  //   })
+  // }
+
+  const sendPositionToBackend = async () => {
     await fetch('/api', {
       method: "POST",
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify({ ...newLocation })
+      body: JSON.stringify(position)
     })
+    console.log(position);
   }
+
 
   const addName = async () => {
     try {
@@ -24,7 +37,7 @@ export default function Home() {
         headers: {
           "Content-type": "application/json"
         },
-        body: JSON.stringify({ name, ip: location?.ip })
+        body: JSON.stringify({ name })
       })
     } catch (err) {
       console.log(err);
@@ -32,14 +45,24 @@ export default function Home() {
   }
 
   const getLocation = async () => {
-    try {
-      const res = await fetch("https://ipapi.co/json");
-      const data = await res.json();
-      const { ip, city, region, country_name, latitude, longitude } = data
-      setLocation({ ip, city, region, country_name, coordinates: [latitude, longitude] });
-      sendDataToBackend({ ip, city, region, country_name, coordinates: [latitude, longitude] });
-    } catch (err) {
-      console.log(err);
+    // no permission
+    // try {
+    //   const res = await fetch("https://ipapi.co/json");
+    //   const data = await res.json();
+    //   const { ip, city, region, country_name, latitude, longitude } = data
+    //   setLocation({ ip, city, region, country_name, coordinates: [latitude, longitude] });
+    //   sendDataToBackend({ ip, city, region, country_name, coordinates: [latitude, longitude] });
+    // } catch (err) {
+    //   console.log(err);
+    // }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        setPosition({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      }, (err) => console.log(err));
     }
   };
 
@@ -51,12 +74,19 @@ export default function Home() {
   useEffect(() => {
     getLocation();
   }, []);
-  useEffect(() => {
-    if (name) {
-      addName()
-    }
-  }, [name])
+  // useEffect(() => {
+  //   if (name) {
+  //     addName()
+  //   }
+  // }, [name])
 
+  useEffect(() => {
+    if (position) {
+      sendPositionToBackend()
+    }
+  }, [position])
+
+  console.log(position);
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <h5 className="text-2xl font-bold mb-5">Please Type Your Name</h5>
