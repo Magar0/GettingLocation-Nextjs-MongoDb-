@@ -17,7 +17,14 @@ const locationSchema = new Schema(
             type: String,
             default: "",
         },
-        userIP: String,
+        city: {
+            type: String,
+            default: "",
+        },
+        userIP: {
+            type: String,
+            require: true,
+        },
         position: [],
     },
     {

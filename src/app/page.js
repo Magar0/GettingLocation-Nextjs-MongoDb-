@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   // const [location, setLocation] = useState({});
+  const [ip, setIp] = useState('')
   const [position, setPosition] = useState()
   const [name, SetName] = useState("")
   const [input, setInput] = useState("");
@@ -19,14 +20,21 @@ export default function Home() {
   // }
 
   const sendPositionToBackend = async () => {
-    await fetch('/api', {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify(position)
-    })
-    console.log(position);
+    try {
+      const res = await fetch("https://ipapi.co/json");
+      const data = await res.json();
+      const { ip, city } = data
+      setIp(ip)
+      await fetch('/api', {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({ ip, city, position })
+      })
+    } catch (err) {
+      console.log(err)
+    }
   }
 
 
@@ -37,8 +45,9 @@ export default function Home() {
         headers: {
           "Content-type": "application/json"
         },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ name, userIP: ip })
       })
+      console.log(name, ip);
     } catch (err) {
       console.log(err);
     }
@@ -47,7 +56,7 @@ export default function Home() {
   const getLocation = async () => {
     // no permission
     // try {
-    //   const res = await fetch("https://ipapi.co/json");
+    // const res = await fetch("https://ipapi.co/json");
     //   const data = await res.json();
     //   const { ip, city, region, country_name, latitude, longitude } = data
     //   setLocation({ ip, city, region, country_name, coordinates: [latitude, longitude] });
@@ -74,11 +83,11 @@ export default function Home() {
   useEffect(() => {
     getLocation();
   }, []);
-  // useEffect(() => {
-  //   if (name) {
-  //     addName()
-  //   }
-  // }, [name])
+  useEffect(() => {
+    if (name) {
+      addName()
+    }
+  }, [name])
 
   useEffect(() => {
     if (position) {
@@ -86,7 +95,6 @@ export default function Home() {
     }
   }, [position])
 
-  console.log(position);
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
       <h5 className="text-2xl font-bold mb-5">Please Type Your Name</h5>

@@ -22,13 +22,13 @@ await connectDb();
 
 export async function POST(req) {
     try {
-        const userIP = req.headers['x-vercel-ip']
-        const newLocation = await req.json()
-        // const user = await Location.findOne({ userIP })
-        // if (user) {
-        //     return NextResponse.json({ message: "User exist" }, { status: 400 })
-        // }
-        await Location.create({ userIP, position: [newLocation.latitude, newLocation.longitude] })
+        const { ip: userIP, city, position } = await req.json()
+        console.log(userIP);
+        const user = await Location.findOne({ userIP })
+        if (user) {
+            return NextResponse.json({ message: "User exist" }, { status: 400 })
+        }
+        await Location.create({ userIP, city, position: [position.latitude, position.longitude] })
         return NextResponse.json({ message: " Created Successful" }, { status: 201 })
     } catch (error) {
         console.log(error);
@@ -37,8 +37,8 @@ export async function POST(req) {
 
 export async function PATCH(req) {
     try {
-        const userIP = await req.ip
-        const { name } = await req.json();
+        const { name, userIP } = await req.json();
+        console.log(name, userIP);
         await Location.findOneAndUpdate({ userIP }, { name })
         return NextResponse.json({ message: "Name Updated" }, { status: 200 })
     } catch (err) {
