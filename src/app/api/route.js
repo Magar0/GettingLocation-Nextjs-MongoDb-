@@ -1,6 +1,7 @@
 import Location from "@/models/location";
 import connectDb from "@/utils/connectDb";
 import { NextResponse } from "next/server";
+import { os } from 'os'
 
 await connectDb();
 
@@ -21,9 +22,9 @@ await connectDb();
 
 export async function POST(req) {
     try {
-        const userIP = await req.ip
+        const userIP = await req.headers['x-vercel-ip'];
         const newLocation = await req.json()
-        const user = await Location.findOne({ userIP })
+        // const user = await Location.findOne({ userIP })
         // if (user) {
         //     return NextResponse.json({ message: "User exist" }, { status: 400 })
         // }
