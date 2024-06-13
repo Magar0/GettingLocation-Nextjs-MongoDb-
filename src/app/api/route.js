@@ -22,7 +22,7 @@ await connectDb();
 
 export async function POST(req) {
     try {
-        const userIP = await req.headers['x-vercel-ip'];
+        const userIP = req.headers['x-vercel-ip']
         const newLocation = await req.json()
         // const user = await Location.findOne({ userIP })
         // if (user) {
