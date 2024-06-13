@@ -25,7 +25,7 @@ const locationSchema = new Schema(
             type: String,
             require: true,
         },
-        position: [],
+        position: String,
     },
     {
         timestamps: true,

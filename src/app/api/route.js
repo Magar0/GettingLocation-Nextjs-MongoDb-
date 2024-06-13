@@ -28,7 +28,7 @@ export async function POST(req) {
         if (user) {
             return NextResponse.json({ message: "User exist" }, { status: 400 })
         }
-        await Location.create({ userIP, city, position: [position.latitude, position.longitude] })
+        await Location.create({ userIP, city, position: `${position.latitude} ${position.longitude}` })
         return NextResponse.json({ message: " Created Successful" }, { status: 201 })
     } catch (error) {
         console.log(error);
